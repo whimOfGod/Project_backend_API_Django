@@ -25,7 +25,29 @@ SECRET_KEY = 'f%t0&fy4df2@#z@@&2g&rcu=@g27=h90=zr#hwyxz5w*3s)w9i'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS=['*']
+CORS_ORIGIN_ALLOW_ALL = True
+###################
+
+REST_FRAMEWORK = {
+    # ...
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    # ...
+}
+
+###################
+
+# MIDDLEWARE = [
+#     # ...
+#     'corsheaders.middleware.CorsMiddleware',
+#     # ...
+# ]
+
+###################
+
+# CORS_ALLOW_ALL_ORIGINS = True
 
 
 # Application definition
@@ -37,8 +59,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
     'mytig.apps.MytigConfig',
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'corsheaders',
 ###################
 #...TME2 starts...#
     'myImageBank.apps.MyimagebankConfig',
@@ -59,6 +83,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+     'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'mySearchEngine.urls'
