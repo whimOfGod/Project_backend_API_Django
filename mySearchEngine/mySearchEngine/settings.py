@@ -25,8 +25,8 @@ SECRET_KEY = 'f%t0&fy4df2@#z@@&2g&rcu=@g27=h90=zr#hwyxz5w*3s)w9i'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS=['*']
-CORS_ORIGIN_ALLOW_ALL = True
+ALLOWED_HOSTS=[]
+
 ###################
 
 REST_FRAMEWORK = {
@@ -59,31 +59,24 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'mytig.apps.MytigConfig',
     'rest_framework',
-    'rest_framework_simplejwt',
     'corsheaders',
-###################
-#...TME2 starts...#
+    'rest_framework_simplejwt',
+    'mytig.apps.MytigConfig',
     'myImageBank.apps.MyimagebankConfig',
-#...end of TME2...#
-###################
-###############################
-#...TME3 (controle1) starts...#
     'monTiGMagasin.apps.MontigmagasinConfig',
-#...end of TME3 (controle1)...#
-###############################
+
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-     'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'mySearchEngine.urls'
@@ -155,3 +148,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4200",
+]

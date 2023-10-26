@@ -22,20 +22,33 @@ class InfoProductDetail(APIView):
         serializer = InfoProductSerializer(product)
         return Response(serializer.data)
     
-class PutOnSale(APIView):
-    def put(self, request, tig_id, newprice, format=None):
-        try:
-            product = InfoProduct.objects.get(tig_id=tig_id)
-        except InfoProduct.DoesNotExist:
-            raise Http404
-        
-        newprice_float = float(newprice)
-        product.sale = True
-        product.discount = newprice_float
-        product.save()
 
-        serializer = InfoProductSerializer(product)
+class PutOnSale(APIView):
+    def get_object(self, tig_id):
+            """ Tente la récupération d'un produit en promotion,
+            renvoie None si le produit n'existe pas. """
+            try:
+                return InfoProduct.objects.get(tig_id = tig_id)
+            except InfoProduct.DoesNotExist:
+                raise Http404
+
+    def get(self, request, tig_id, newprice, format = None):
+        try:
+            InfoProduct.objects.filter(tig_id = tig_id).update(
+                sale = True, discount = float(newprice))
+        except Exception:
+            return Response({'message': 'newprice doit être un flottant.'})
+
+        produit = self.get_object(tig_id)
+        serializer = InfoProductSerializer(produit)
+
+        #promoProduit = ProduitEnPromotion(tig_id = tig_id)
+        #promoProduit.save()
+
         return Response(serializer.data)
+
+
+
     
 class RemoveSale(APIView):
     def put(self, request, tig_id, format=None):
@@ -49,38 +62,42 @@ class RemoveSale(APIView):
         product.save()
 
         serializer = InfoProductSerializer(product)
-        return Response(serializer.data)
+        return Response(serializer.data)   
+
+
     
 class IncrementStock(APIView):
-    def put(self, request, tig_id, number, format=None):
+
+    def get_object(self, tig_id):
         try:
-            product = InfoProduct.objects.get(tig_id=tig_id)
+            return InfoProduct.objects.get(tig_id = tig_id)
         except InfoProduct.DoesNotExist:
             raise Http404
 
-        product.quantityInStock += number
-        product.save()
-
-        serializer = InfoProductSerializer(product)
+    def get(self, request, tig_id, number, format = None):
+        produit = self.get_object(tig_id)
+        InfoProduct.objects.filter(tig_id = tig_id).update(
+            quantityInStock = produit.quantityInStock + number)
+        produit.refresh_from_db()
+        serializer = InfoProductSerializer(produit)
         return Response(serializer.data)
-    
 
-#......#
 class DecrementStock(APIView):
-    def put(self, request, tig_id, number, format=None):
+    def get_object(self, tig_id):
         try:
-            product = InfoProduct.objects.get(tig_id=tig_id)
-        except InfoProduct.DoesNotExist:
+            return InfoProduct.objects.get(tig_id = tig_id)
+        except Exception:
             raise Http404
 
-        if product.quantityInStock >= number:
-            product.quantityInStock -= number
-            product.save()
+    def get(self, request, tig_id, number, format = None):
+        produit = self.get_object(tig_id)
+       
+        if number > produit.quantityInStock:
+            InfoProduct.objects.filter(tig_id = tig_id).update(quantityInStock = 0)
         else:
-            return Response({"error": "Not enough stock available."}, status=400)
+            InfoProduct.objects.filter(tig_id = tig_id).update(
+                quantityInStock = produit.quantityInStock - number)
+            produit.refresh_from_db()
 
-        serializer = InfoProductSerializer(product)
+        serializer = InfoProductSerializer(produit)
         return Response(serializer.data)
-
-
-    
