@@ -1,6 +1,6 @@
 # Project_backend_API_Django
 
-Voici quelques commandes utiles au bon fonctionnent du backend s'il y a des erreurs:
+Voici quelques commandes utiles au bon fonctionnement du backend s'il y a des erreurs:
 
 
 pour régler les problèmes lier à l'installation du djangorestframewort-simplejwt
