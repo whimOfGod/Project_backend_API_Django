@@ -1,9 +1,11 @@
+from math import sumprod
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from monTiGMagasin.config import baseUrl
 from monTiGMagasin.models import InfoProduct
 from monTiGMagasin.serializers import InfoProductSerializer
+from datetime import date
 
 # Create your views here.
 class InfoProductList(APIView):
@@ -64,7 +66,21 @@ class RemoveSale(APIView):
         serializer = InfoProductSerializer(product)
         return Response(serializer.data)   
 
+class CalculateRevenue(APIView):
+    def get(self, request, year, month, format=None):
+        # Convertissez les paramètres d'année et de mois en un objet de date
+        try:
+            start_date = date(int(year), int(month), 1)
+            end_date = start_date.replace(day=31)
+        except ValueError:
+            return JsonResponse({'error': 'Année et/ou mois non valides.'}, status=400)
 
+        # Filtrez les produits vendus pour la période donnée
+        sold_products = InfoProduct.objects.filter(sale_date__range=[start_date, end_date])
+
+        # Calculez le chiffre d'affaires total pour la période
+        total_revenue = sold_products.aggregate(sumprod('quantity_sold', 'price'))['price__sum'] or 0
+        return JsonResponse({'total_revenue': total_revenue})
     
 class IncrementStock(APIView):
 
@@ -101,3 +117,5 @@ class DecrementStock(APIView):
 
         serializer = InfoProductSerializer(produit)
         return Response(serializer.data)
+    
+    

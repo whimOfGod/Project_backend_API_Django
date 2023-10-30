@@ -13,7 +13,8 @@ class InfoProduct(models.Model):
     discount = models.FloatField(default='0')
     comments = models.CharField(max_length=100, blank=True, default='')
     owner = models.CharField(max_length=20, blank=True, default='tig_orig')
-    quantityInStock = models.IntegerField(default='0')
+    quantityInStock = models.IntegerField(default='0'),
+    sale_date = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ('name',)
