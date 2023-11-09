@@ -9,4 +9,5 @@ urlpatterns = [
     path('incrementstock/<int:tig_id>/<int:number>/', views.IncrementStock.as_view()),
     path('decrementstock/<int:tig_id>/<int:number>/', views.DecrementStock.as_view()),
     path('calculate-revenue/<int:year>/<int:month>/', views.CalculateRevenue.as_view(), name='calculate-revenue'),
+    
 ]
